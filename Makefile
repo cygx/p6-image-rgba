@@ -12,7 +12,7 @@ t-%: t/%-*.t
 	$(PERL6) $<
 
 png: 
-	$(PERL6) png.p6 examples/*.txt
+	$(PERL6) examples/png.p6 examples/*.txt
 	@$(CHMOD-X) examples/*.png
 
 clean:
