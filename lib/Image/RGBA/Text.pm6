@@ -5,17 +5,10 @@ my class Decoder {
     has %.palette;
     has uint $!pos;
 
-    method seek(uint $pos) {
-        $!pos = $pos;
-    }
-
-    method tell {
-        $!pos;
-    }
-
-    method done {
-        $!pos == $!image.width * $!image.height * 4;
-    }
+    method scale { 1 }
+    method seek(uint $pos) { $!pos = $pos }
+    method tell { $!pos }
+    method done { $!pos == $!image.width * $!image.height * 4 }
 
     method paint($color --> Nil) {
         my $bytes := $!image.bytes;
@@ -70,7 +63,7 @@ my class Decoder {
         }
     }
 
-    method decode(Str $_ ) {
+    method parse(Str $_ ) {
         self.paint(%!palette{$_} // $_)
             for .words;
 
@@ -99,6 +92,18 @@ my class ScalingDecoder is Decoder {
 }
 
 class Image::RGBA::Text {
+    multi method decoder($width, $height, :%palette = {}) {
+        Decoder.new(image => Image::RGBA.new(:$width, :$height), :%palette);
+    }
+
+    multi method decoder($width is copy, $height is copy, $scale,
+        :%palette = {}) {
+        $width *= $scale;
+        $height *= $scale;
+        ScalingDecoder.new(image => Image::RGBA.new(:$width, :$height),
+            :$scale, :%palette);
+    }
+
     multi method decode($src) {
         LEAVE $src.?close;
         self.decode($src, :all).iterator.pull-one;
@@ -118,22 +123,13 @@ class Image::RGBA::Text {
 
             | '=img' <!{ defined $decoder }> \h+
                 ((\d+) \h+ (\d+) \h+ (\d+) {
-                    my $scale = +$2;
-                    my $width = +$0 * $scale;
-                    my $height = +$1 * $scale;
-                    my $image = Image::RGBA.new(:$width, :$height);
-
-                    $decoder := ScalingDecoder.new(:$image, :$scale);
+                    $decoder := Image::RGBA::Text.decoder(+$0, +$1, +$2);
                     $palette := $decoder.palette;
                 })
                 
             | '=img' <!{ defined $decoder }> \h+
                 ((\d+) \h+ (\d+) {
-                    my $width = +$0;
-                    my $height = +$1;
-                    my $image = Image::RGBA.new(:$width, :$height);
-
-                    $decoder := Decoder.new(:$image);
+                    $decoder := Image::RGBA::Text.decoder(+$0, +$1);
                     $palette := $decoder.palette;
                 })
 
@@ -155,7 +151,7 @@ class Image::RGBA::Text {
             ]
             || '=' { !!! }
             $/
-            or do if $decoder.decode($_).done {
+            or do if $decoder.parse($_).done {
                 take $decoder.image;
                 $decoder := Nil;
                 $palette := Nil;
