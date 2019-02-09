@@ -18,7 +18,7 @@ my class Decoder {
         given $color.chars {
             # basic
             when 1 {
-                my uint $val = :16($color) orelse .throw;
+                my uint $val = (:16($color) orelse .throw);
                 my uint $dark = !($val +& 8);
 
                 $bytes[$pos++] = 0xFF * ?($val +& 1) +> $dark;
@@ -29,7 +29,7 @@ my class Decoder {
 
             # grayscale
             when 2 {
-                my uint $val = :16($color) orelse .throw;
+                my uint $val = (:16($color) orelse .throw);
 
                 $bytes[$pos++] = $val;
                 $bytes[$pos++] = $val;
@@ -141,15 +141,16 @@ class Image::RGBA::Text {
 
             | '=map' <?{ defined $palette }> \h+
                 ([(\H+) \h+ (<.xdigit>+)]+ % \h+ {
-                    $palette{$0} = ~$1;
+                    $palette{~<<$0} = ~<<$1;
                 })
 
             | '=meta' <?{ defined $decoder }> \h+
                 ((\w+) \h+ (.+) {
                     $decoder.image.meta{$0} = ~$1;
                 })
-            ]
             || '=' { !!! }
+            || \h*
+            ]
             $/
             or do if $decoder.parse($_).done {
                 take $decoder.image;
