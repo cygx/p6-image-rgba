@@ -1,0 +1,32 @@
+=palette dot
+=map . f
+
+A tiny image of the capital letter J
+
+=img 5 8 10
+=meta name letter-J
+=use dot
+
+    . . . . .
+    . 0 0 0 .
+    . . . 0 .
+    . . . 0 .
+    . . . 0 .
+    . . . 0 .
+    . 0 0 . .
+    . . . . .
+
+A tiny image of the capital letter L
+
+=img 5 8 10
+=meta name letter-L
+=use dot
+
+    . . . . .
+    . 0 . . .
+    . 0 . . .
+    . 0 . . .
+    . 0 . . .
+    . 0 . . .
+    . 0 0 0 .
+    . . . . .
