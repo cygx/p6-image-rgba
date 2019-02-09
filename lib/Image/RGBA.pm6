@@ -30,11 +30,8 @@ class Image::RGBA {
         }
     }
 
-    method box($bytes, $width, $height) {
-        self.new(:$bytes, :$width, :$height);
-    }
+    method buf8 { self.bytes }
+    method blob8 { self.bytes }
 
-    method unbox {
-        $!bytes, $!width, $!height;
-    }
+    method create($width, $height) { self.new(:$width, :$height) }
 }

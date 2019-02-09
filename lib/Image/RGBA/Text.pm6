@@ -1,6 +1,8 @@
 use Image::RGBA;
 use nqp;
 
+unit module Image::RGBA::Text;
+
 sub paint($bytes, uint $pos is copy, $color --> uint) {
     given $color.chars {
         # basic
@@ -52,9 +54,34 @@ sub paint($bytes, uint $pos is copy, $color --> uint) {
     $pos;
 }
 
-my class Decoder {
-    has Image::RGBA $.image is required;
+class BasicDecoder { ... }
+class ScalingDecoder { ... }
+
+class Decoder {
     has %.palette;
+
+    method decode(Str $_ ) {
+        self.paint(%!palette{$_} // $_) for .words;
+        self;
+    }
+
+    proto method create(|) {*}
+
+    multi method create($width, $height, :%palette = {}) {
+        BasicDecoder.new(
+            image => Image::RGBA.create($width, $height),
+            :%palette);
+    }
+
+    multi method create($width, $height, $scale, :%palette = {}) {
+        ScalingDecoder.new(
+            image => Image::RGBA.create($width * $scale, $height * $scale),
+            :$scale, :%palette);
+    }
+}
+
+class BasicDecoder is Decoder {
+    has Image::RGBA $.image is required;
     has uint $!pos;
 
     method scale { 1 }
@@ -62,14 +89,9 @@ my class Decoder {
     method tell { $!pos }
     method done { $!pos == $!image.width * $!image.height * 4 }
     method paint($color) { $!pos = paint($!image.bytes, $!pos, $color) }
-
-    method parse(Str $_ ) {
-        self.paint(%!palette{$_} // $_) for .words;
-        self;
-    }
 }
 
-my class ScalingDecoder is Decoder {
+class ScalingDecoder is BasicDecoder {
     has uint $.scale is required;
     has uint $!mark;
 
@@ -98,25 +120,13 @@ my class ScalingDecoder is Decoder {
     }
 }
 
-class Image::RGBA::Text {
-    multi method decoder($width, $height, :%palette = {}) {
-        Decoder.new(image => Image::RGBA.new(:$width, :$height), :%palette);
-    }
-
-    multi method decoder($width is copy, $height is copy, $scale,
-        :%palette = {}) {
-        $width *= $scale;
-        $height *= $scale;
-        ScalingDecoder.new(image => Image::RGBA.new(:$width, :$height),
-            :$scale, :%palette);
-    }
-
-    multi method decode($src) {
+class Reader {
+    method read($src) {
         LEAVE $src.?close;
-        self.decode($src, :all).iterator.pull-one;
+        self.readall($src).iterator.pull-one;
     }
 
-    multi method decode($src, :$all!) {
+    method readall($src) {
         my %palettes;
         my $palette := Nil;
         my $decoder := Nil;
@@ -130,13 +140,13 @@ class Image::RGBA::Text {
 
             | '=img' <!{ defined $decoder }> \h+
                 ((\d+) \h+ (\d+) \h+ (\d+) {
-                    $decoder := Image::RGBA::Text.decoder(+$0, +$1, +$2);
+                    $decoder := Decoder.create(+$0, +$1, +$2);
                     $palette := $decoder.palette;
                 })
                 
             | '=img' <!{ defined $decoder }> \h+
                 ((\d+) \h+ (\d+) {
-                    $decoder := Image::RGBA::Text.decoder(+$0, +$1);
+                    $decoder := Decoder.create(+$0, +$1);
                     $palette := $decoder.palette;
                 })
 
@@ -159,7 +169,7 @@ class Image::RGBA::Text {
             || \h*
             ]
             $/
-            or do if $decoder.parse($_).done {
+            or do if $decoder.decode($_).done {
                 take $decoder.image;
                 $decoder := Nil;
                 $palette := Nil;

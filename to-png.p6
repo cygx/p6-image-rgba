@@ -1,7 +1,7 @@
 use lib 'lib';
 
-use Image::RGBA::Text;
+use Image::RGBA::Sugar;
 use Image::PNG::Inflated;
 
-spurt "{ .meta<name> }.png", to-png |.unbox
-    for Image::RGBA::Text.decode($*ARGFILES, :all);
+spurt "{ .meta<name> }.png", .&to-png
+    for rgba.text.readall($*ARGFILES);
