@@ -1,3 +1,6 @@
+# Copyright 2019 cygx <cygx@cpan.org>
+# Distributed under the Boost Software License, Version 1.0
+
 class Image::RGBA {
     has buf8 $.bytes = buf8.allocate($!width * $!height * 4);
     has uint $.width is required;

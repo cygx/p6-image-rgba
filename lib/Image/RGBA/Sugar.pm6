@@ -1,3 +1,6 @@
+# Copyright 2019 cygx <cygx@cpan.org>
+# Distributed under the Boost Software License, Version 1.0
+
 use Image::RGBA;
 use Image::RGBA::Text;
 
