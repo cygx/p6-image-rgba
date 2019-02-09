@@ -59,7 +59,6 @@ my class Decoder {
 
     method scale { 1 }
     method seek(uint $pos) { $!pos = $pos }
-    method skip(uint $n) { $!pos += $n }
     method tell { $!pos }
     method done { $!pos == $!image.width * $!image.height * 4 }
     method paint($color) { $!pos = paint($!image.bytes, $!pos, $color) }
@@ -72,7 +71,7 @@ my class Decoder {
 
 my class ScalingDecoder is Decoder {
     has uint $.scale is required;
-    has uint $!pos;
+    has uint $!mark;
 
     method paint($color) {
         my $bytes := $.image.bytes;
@@ -85,14 +84,17 @@ my class ScalingDecoder is Decoder {
         my $row := buf8.allocate($blocksize);
         nqp::splice($row, $pixel, $_ * 4, 4) for ^$!scale;
 
-        loop (my uint $y = 0; $y < $!scale; ++$y) {
-            self.seek($!pos + $y * $scanline);
-            nqp::splice($bytes, $row, $.tell, $blocksize);
-            self.skip($blocksize);
+        my uint $pos = $!mark;
+        my uint $tail = $pos + $scanline * ($!scale - 1) + $blocksize;
+        while $pos < $tail {
+            nqp::splice($bytes, $row, $pos, $blocksize);
+            $pos += $scanline;
         }
 
-        $!pos += $blocksize;
-        $!pos = $.tell if $!pos %% $scanline;
+        self.seek($tail);
+
+        $!mark += $blocksize;
+        $!mark = $tail if $!mark %% $scanline;
     }
 }
 
