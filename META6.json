@@ -1,7 +1,7 @@
 {
     "perl"        : "6.*",
     "name"        : "Image::RGBA",
-    "description" : "Manipulation of 32-bit RGBA images",
+    "description" : "Create and manipulate 32-bit RGBA images",
     "version"     : "*",
     "auth"        : "github:cygx",
     "license"     : "BSL-1.0",
