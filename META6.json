@@ -1,0 +1,18 @@
+{
+    "perl"        : "6.*",
+    "name"        : "Image::RGBA",
+    "description" : "Manipulation of 32-bit RGBA images",
+    "version"     : "*",
+    "auth"        : "github:cygx",
+    "license"     : "BSL-1.0",
+    "source-url"  : "git://github.com/cygx/p6-image-rgba.git",
+    "provides"    : {
+        "Image::RGBA"        : "lib/Image/RGBA.pm6",
+        "Image::RGBA::Text"  : "lib/Image/RGBA/Text.pm6",
+        "Image::RGBA::Sugar" : "lib/Image/RGBA/Sugar.pm6"
+    },
+    "support"     : {
+        "bugtracker" : "https://github.com/cygx/p6-image-rgba/issues",
+        "source"     : "https://github.com/cygx/p6-image-rgba"
+    }
+}

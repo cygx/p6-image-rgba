@@ -1,6 +1,5 @@
 =img 32 32
 
-=meta name camelia
 =meta description Camelia, the spokesbug for Perl 6
 =meta url https://raw.githubusercontent.com/perl6/mu/master/misc/camelia.txt
 
