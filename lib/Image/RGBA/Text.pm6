@@ -1,4 +1,56 @@
 use Image::RGBA;
+use nqp;
+
+sub paint($bytes, uint $pos is copy, $color --> uint) {
+    given $color.chars {
+        # basic
+        when 1 {
+            my uint $val = (:16($color) orelse .throw);
+            my uint $dark = !($val +& 8);
+
+            $bytes[$pos++] = 0xFF * ?($val +& 1) +> $dark;
+            $bytes[$pos++] = 0xFF * ?($val +& 2) +> $dark;
+            $bytes[$pos++] = 0xFF * ?($val +& 4) +> $dark;
+            $bytes[$pos++] = 0xFF * !($val == 8);
+        }
+
+        # grayscale
+        when 2 {
+            my uint $val = (:16($color) orelse .throw);
+
+            $bytes[$pos++] = $val;
+            $bytes[$pos++] = $val;
+            $bytes[$pos++] = $val;
+            $bytes[$pos++] = 0xFF;
+        }
+
+        # rgb
+        when 3 {
+            $bytes[$pos++] = 0x11 * :16($_) for $color.comb;
+            $bytes[$pos++] = 0xFF;
+        }
+
+        # grayscale + alpha
+        when 4 {
+            $bytes[$pos++] = 0x11 * :16($_) for $color.comb;
+        }
+
+        # rrggbb
+        when 6 {
+            $bytes[$pos++] = :16($_) for $color.comb(2);
+            $bytes[$pos++] = 0xFF;
+        }
+
+        # rrggbbaa
+        when 8 {
+            $bytes[$pos++] = :16($_) for $color.comb(2);
+        }
+
+        default { !!! }
+    }
+
+    $pos;
+}
 
 my class Decoder {
     has Image::RGBA $.image is required;
@@ -7,66 +59,13 @@ my class Decoder {
 
     method scale { 1 }
     method seek(uint $pos) { $!pos = $pos }
+    method skip(uint $n) { $!pos += $n }
     method tell { $!pos }
     method done { $!pos == $!image.width * $!image.height * 4 }
-
-    method paint($color --> Nil) {
-        my $bytes := $!image.bytes;
-        my uint $pos = $!pos;
-        LEAVE $!pos = $pos;
-
-        given $color.chars {
-            # basic
-            when 1 {
-                my uint $val = (:16($color) orelse .throw);
-                my uint $dark = !($val +& 8);
-
-                $bytes[$pos++] = 0xFF * ?($val +& 1) +> $dark;
-                $bytes[$pos++] = 0xFF * ?($val +& 2) +> $dark;
-                $bytes[$pos++] = 0xFF * ?($val +& 4) +> $dark;
-                $bytes[$pos++] = 0xFF * !($val == 8);
-            }
-
-            # grayscale
-            when 2 {
-                my uint $val = (:16($color) orelse .throw);
-
-                $bytes[$pos++] = $val;
-                $bytes[$pos++] = $val;
-                $bytes[$pos++] = $val;
-                $bytes[$pos++] = 0xFF;
-            }
-
-            # rgb
-            when 3 {
-                $bytes[$pos++] = 0x11 * :16($_) for $color.comb;
-                $bytes[$pos++] = 0xFF;
-            }
-
-            # grayscale + alpha
-            when 4 {
-                $bytes[$pos++] = 0x11 * :16($_) for $color.comb;
-            }
-
-            # rrggbb
-            when 6 {
-                $bytes[$pos++] = :16($_) for $color.comb(2);
-                $bytes[$pos++] = 0xFF;
-            }
-
-            # rrggbbaa
-            when 8 {
-                $bytes[$pos++] = :16($_) for $color.comb(2);
-            }
-
-            default { !!! }
-        }
-    }
+    method paint($color) { $!pos = paint($!image.bytes, $!pos, $color) }
 
     method parse(Str $_ ) {
-        self.paint(%!palette{$_} // $_)
-            for .words;
-
+        self.paint(%!palette{$_} // $_) for .words;
         self;
     }
 }
@@ -76,17 +75,23 @@ my class ScalingDecoder is Decoder {
     has uint $!pos;
 
     method paint($color) {
+        my $bytes := $.image.bytes;
         my uint $scanline = $.image.width * 4;
+        my uint $blocksize = $!scale * 4;
+
+        my $pixel := buf8.allocate(4);
+        paint($pixel, 0, $color);
+
+        my $row := buf8.allocate($blocksize);
+        nqp::splice($row, $pixel, $_ * 4, 4) for ^$!scale;
 
         loop (my uint $y = 0; $y < $!scale; ++$y) {
             self.seek($!pos + $y * $scanline);
-
-            loop (my uint $x = 0; $x < $!scale; ++$x) {
-                self.Decoder::paint($color);
-            }
+            nqp::splice($bytes, $row, $.tell, $blocksize);
+            self.skip($blocksize);
         }
 
-        $!pos += $!scale * 4;
+        $!pos += $blocksize;
         $!pos = $.tell if $!pos %% $scanline;
     }
 }
