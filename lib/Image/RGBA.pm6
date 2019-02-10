@@ -33,7 +33,8 @@ class Image::RGBA {
 
             method gist { self.Str }
             method Str { "rgba($.r,$.g,$.b,$.a)" }
-            method hex { self.value.fmt('%08X') }
+            method hex { (self.value +> 8).fmt('%06X') }
+            method hexa { self.value.fmt('%08X') }
         }
     }
 
