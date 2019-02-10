@@ -43,6 +43,21 @@ say create-rgba-from-text(q:to/THE_END/, 2, 2, :%palette).pixel(0, 1);
 
 # Description
 
+This module allows the manipulation of raw RGBA images on a per-pixel basis
+and the creation of such images from a simple text format.
+
+The pixel data is held in a flat byte buffer, with each 4-byte sequence
+describing the red, green, blue and alpha channel.
+
+The text representation of a pixel is given by a sequence of non-whitespace
+characters (a 'word'), separated by whitespace to form the image data.
+
+Before decoding, each word gets filtered through a 'palette', a hash mapping
+arbitrary words to hexadecimal color values in one of the 6 supported formats.
+
+Images may be embedded in structured text files, with each line potentially
+holding a parsing directive starting in `=`, or pixel data.
+
 ## The Base Module Image::RGBA
 
 Wraps binary pixel data.
@@ -138,17 +153,32 @@ path and converted via a call to `.IO`.
 
 # The Textual Format
 
-Yet to be fully documented. See the [`examples`][EXAMPLES] directory
-for reference code.
+Yet to be properly documented. When in doubt, check the [`examples`][EXAMPLES]
+directoryfor working code.
+
+## Supported Directives
+
+    =img <width> <height> <scale>?
+
+    =palette <name>
+
+    =map <alias> <color>
+
+    =use <palette>
+
+    =meta <key> <value>
+
+Following an `=img` directive, until the image has been fully colorized,
+each line that does not start in `=` is assumed to hold pixel data.
 
 ## Supported Color Formats
 
-There are six different ways to specify colors. They are distinguished by the 
+There are six different ways to specify colors. They are distinguished by the
 number of characters in the given string.
 
 ### A single hexadecimal digit
 
-Digits 0 through 7 are black and dark colors, all opaque. Digit 8 is a 
+Digits 0 through 7 are black and dark colors, all opaque. Digit 8 is a
 transparent black pixel. Digit 9 through F are bright colors followed
 by white.
 
