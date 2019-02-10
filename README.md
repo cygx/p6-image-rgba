@@ -210,7 +210,7 @@ request, use the [issue tracker][TRACKER] over there.
 
 # Copyright and License
 
-Copyright (C) 2019 by <cygx@cpan.org>
+Copyright (C) 2019 by cygx \<<cygx@cpan.org>\>
 
 Distributed under the [Boost Software License, Version 1.0][LICENSE]
 
