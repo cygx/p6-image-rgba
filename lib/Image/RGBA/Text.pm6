@@ -122,7 +122,8 @@ class ScalingDecoder is Decoder {
 
 method load($src, :%palettes = {}) {
     LEAVE $src.?close;
-    self.slurp($src, :%palettes).iterator.pull-one;
+    $_ =:= IterationEnd ?? Nil !! $_
+        given self.slurp($src, :%palettes).iterator.pull-one;
 }
 
 method slurp($src, :%palettes = {}) {
