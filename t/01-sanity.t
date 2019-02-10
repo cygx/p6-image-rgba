@@ -1,9 +1,9 @@
 use Test;
-use Image::RGBA::Sugar;
+use Image::RGBA::Fun;
 
 plan 4;
 
-my $img := rgba::text.parse(q:to/THE_END/, 2, 2);
+my $img := rgba-create-image-from-text(q:to/THE_END/, 2, 2);
     A B
     C D
     THE_END

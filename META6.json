@@ -7,9 +7,9 @@
     "license"     : "BSL-1.0",
     "source-url"  : "git://github.com/cygx/p6-image-rgba.git",
     "provides"    : {
-        "Image::RGBA"        : "lib/Image/RGBA.pm6",
-        "Image::RGBA::Text"  : "lib/Image/RGBA/Text.pm6",
-        "Image::RGBA::Sugar" : "lib/Image/RGBA/Sugar.pm6"
+        "Image::RGBA"       : "lib/Image/RGBA.pm6",
+        "Image::RGBA::Text" : "lib/Image/RGBA/Text.pm6",
+        "Image::RGBA::Fun"  : "lib/Image/RGBA/Fun.pm6"
     },
     "support"     : {
         "bugtracker" : "https://github.com/cygx/p6-image-rgba/issues",

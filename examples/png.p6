@@ -1,16 +1,18 @@
-use Image::RGBA::Sugar;
+use Image::RGBA::Fun;
 use Image::PNG::Inflated;
 
-for rgba::text.readall($*ARGFILES) {
-    my $name = .meta<name>;
-    my $src = $*ARGFILES.path;
-    my $dest = $name ?? $src.sibling("$name\.png") !! $src.extension('png');
+sub size($file) {
+    ($file.s / 1000).round(0.01) ~ 'k';
+}
 
-    my $ss = ($src.s / 1000).round(0.01);
-    $*ERR.print: "$src ->> {$dest.basename}   {$ss}k ->> ?";
+for @*ARGS -> IO() $src {
+    for rgba-slurp-textfile($src) {
+        my $name = .meta<name>;
+        my $dest = $name ?? $src.sibling("$name\.png")
+                         !! $src.extension('png');
 
-    spurt $dest, .&to-png;
-
-    my $ds = ($dest.s / 1000).round(0.01);
-    $*ERR.print: "\b{$ds}k\n";
+        $*ERR.print: "$src ->> {$dest.basename}   {size $src} ->> ?";
+        spurt $dest, .&to-png;
+        $*ERR.print: "\b{size $dest}\n";
+    }
 }

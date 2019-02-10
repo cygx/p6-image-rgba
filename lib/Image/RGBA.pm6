@@ -7,6 +7,10 @@ class Image::RGBA {
     has uint $.height is required;
     has %.meta;
 
+    method create($width, $height, $bytes?) {
+        self.new(:$width, :$height, |(:$bytes with $bytes));
+    }
+
     method pixel($x, $y) {
         my $bytes := $!bytes;
         my $offset := ($y * $!width + $x) * 4;
@@ -33,8 +37,8 @@ class Image::RGBA {
         }
     }
 
-    method buf8 { self.bytes }
-    method blob8 { self.bytes }
-
-    method create($width, $height) { self.new(:$width, :$height) }
+    method buf8 { $!bytes }
+    method ::('Buf[uint8]') { $!bytes }
+    method blob8 { $!bytes }
+    method ::('Blob[uint8]') { $!bytes }
 }
