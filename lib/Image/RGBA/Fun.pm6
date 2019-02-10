@@ -4,7 +4,7 @@
 use Image::RGBA;
 use Image::RGBA::Text;
 
-# Creation of individual images from raw data
+# Create individual images from raw data
 
 sub rgba-create-image($width, $height, $bytes?) is export {
     Image::RGBA.create($width, $height, $bytes);
