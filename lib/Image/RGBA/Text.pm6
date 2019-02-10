@@ -11,12 +11,12 @@ sub paint($bytes, uint $pos is copy, $color --> uint) {
         # basic
         when 1 {
             my uint $val = (:16($color) orelse .throw);
-            my uint $dark = !($val +& 8);
+            my uint $col = (0x80 +| 0xFF * ?($val +& 8));
 
-            $bytes[$pos++] = 0xFF * ?($val +& 1) +> $dark;
-            $bytes[$pos++] = 0xFF * ?($val +& 2) +> $dark;
-            $bytes[$pos++] = 0xFF * ?($val +& 4) +> $dark;
-            $bytes[$pos++] = 0xFF * !($val == 8);
+            $bytes[$pos++] = ?($val +& 1) * $col;
+            $bytes[$pos++] = ?($val +& 2) * $col;
+            $bytes[$pos++] = ?($val +& 4) * $col;
+            $bytes[$pos++] = ($val != 8) * 0xFF;
         }
 
         # grayscale
