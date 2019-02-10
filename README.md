@@ -103,7 +103,8 @@ class Image::RGBA::Text {
 ```
 
 The `$src` argument must provide a `lines` method. Examples of valid sources
-are strings, file handles and path objects.
+are strings, file handles and path objects. A hash of named palette hashes may
+be passed in, allowing communication betweeen sources.
 
 The module contains two decoder classes that implement parsing of color values
 and colorization of the image.
@@ -130,6 +131,7 @@ class Image::RGBA::Text::ScalingDecoder is Image::RGBA::Text::Decoder {
     method create($width, $height, $scale, %palette?) { ... }
 }
 ```
+The latter class allows automatic scaling of the image by an integer factor.
 
 ## Functional API provided by Image::RGBA::Fun
 
@@ -154,7 +156,7 @@ path and converted via a call to `.IO`.
 # The Textual Format
 
 Yet to be properly documented. When in doubt, check the [`examples`][EXAMPLES]
-directoryfor working code.
+directory for working code.
 
 ## Supported Directives
 
@@ -171,6 +173,9 @@ directoryfor working code.
 Following an `=img` directive, until the image has been fully colorized,
 each line that does not start in `=` is assumed to hold pixel data.
 
+A `=palette` directive may occur between `=img` directives, but may not
+occur until any given image is complete.
+
 ## Supported Color Formats
 
 There are six different ways to specify colors. They are distinguished by the
@@ -178,8 +183,8 @@ number of characters in the given string.
 
 ### A single hexadecimal digit
 
-Digits 0 through 7 are black and dark colors, all opaque. Digit 8 is a
-transparent black pixel. Digit 9 through F are bright colors followed
+Numbers 0 through 7 are black and dark colors, all opaque. Number 8 is a
+transparent black pixel. Numbers 9 through F are bright colors followed
 by white.
 
 | Digit | RGB value | Alpha value | Name                  |
