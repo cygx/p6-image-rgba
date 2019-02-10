@@ -30,11 +30,11 @@ for Image::RGBA::Text.slurp('examples/feep.txt'.IO) {
 use Image::RGBA::Fun;
 use Image::PGN::Inflated;
 
-my $img = rgba-load-image-from-textfile('examples/camelia.txt');
+my $img = load-rgba-from-textfile('examples/camelia.txt');
 spurt 'camelia.png', to-png($img);
 
 my %palette = x => 'fbf', o => 'a33';
-say rgba-create-image-from-text(q:to/THE_END/, 2, 2, :%palette).pixel(0, 1);
+say create-rgba-from-text(q:to/THE_END/, 2, 2, :%palette).pixel(0, 1);
     x o
     o x
     THE_END
@@ -120,16 +120,16 @@ class Image::RGBA::Text::ScalingDecoder is Image::RGBA::Text::Decoder {
 
 ```perl6
 # Create individual images from raw data
-sub rgba-create-image($width, $height, $bytes?) { ... }
-sub rgba-create-image-from-text($text, $width, $height, $scale = 1, :%palette) { ... }
+sub create-rgba($width, $height, $bytes?) { ... }
+sub create-rgba-from-text($text, $width, $height, $scale = 1, :%palette) { ... }
 
 # Load individual image, parsing directives
-sub rgba-load-image-from-text($text, :%palettes) { ... }
-sub rgba-load-image-from-textfile($file, :%palettes) { ... }
+sub load-rgba-from-text($text, :%palettes) { ... }
+sub load-rgba-from-textfile($file, :%palettes) { ... }
 
 # Load all images, parsing directives
-sub rgba-slurp-text($text, :%palettes) { ... }
-sub rgba-slurp-textfile($file, :%palettes) is export { ... }
+sub slurp-rgba-from-text($text, :%palettes) { ... }
+sub slurp-rgba-from-textfile($file, :%palettes) is export { ... }
 ```
 
 If a file argument is not of type `IO::Handle`, it is assumed to be a file
