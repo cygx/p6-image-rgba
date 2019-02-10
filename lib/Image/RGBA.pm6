@@ -21,13 +21,13 @@ class Image::RGBA {
             method b is rw { $bytes[$offset + 2] }
             method a is rw { $bytes[$offset + 3] }
 
-            method value($endian = BigEndian) is rw {
+            method value($order = BigEndian) is rw {
                 Proxy.new:
                     FETCH => -> $ {
-                        $bytes.read-uint32($offset, $endian);
+                        $bytes.read-uint32($offset, $order);
                     },
                     STORE => -> $, $value {
-                        $bytes.write-uint32($offset, $value, $endian);
+                        $bytes.write-uint32($offset, $value, $order);
                     }
             }
 
