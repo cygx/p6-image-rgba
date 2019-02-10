@@ -173,7 +173,7 @@ directory for working code.
 Following an `=img` directive, until the image has been fully colorized,
 each line that does not start in `=` is assumed to hold pixel data.
 
-A `=palette` directive may occur between `=img` directives, but may not
+A `=palette` directive may occur between `=img` directives, but must not
 occur until any given image is complete.
 
 ## Supported Color Formats
