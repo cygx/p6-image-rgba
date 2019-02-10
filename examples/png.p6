@@ -6,7 +6,7 @@ sub size($file) {
 }
 
 for @*ARGS -> IO() $src {
-    for rgba-slurp-textfile($src) {
+    for slurp-rgba-from-textfile($src) {
         my $name = .meta<name>;
         my $dest = $name ?? $src.sibling("$name\.png")
                          !! $src.extension('png');
