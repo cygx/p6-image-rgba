@@ -31,40 +31,43 @@ sub fakeblend-channel(uint8 $dc, uint8 $da, uint8 $sc, uint8 $sa, uint8 $a
 
 sub blend($d, $s, num $gamma --> Nil) is export {
     if $s.a != 0 {
-        my uint8 $da = $d.a;
-        my uint8 $sa = $s.a;
-        my uint8 $a = blend-alpha($da, $sa);
-        my num $inv-gamma = 1e0 / $gamma;
+        my uint8 ($dr, $dg, $db, $da) = @$d;
+        my uint8 ($sr, $sg, $sb, $sa) = @$s;
 
-        $d.r = blend-channel($d.r, $da, $s.r, $sa, $a, $gamma, $inv-gamma);
-        $d.g = blend-channel($d.g, $da, $s.g, $sa, $a, $gamma, $inv-gamma);
-        $d.b = blend-channel($d.b, $da, $s.b, $sa, $a, $gamma, $inv-gamma);
+        my num $inv-gamma = 1e0 / $gamma;
+        my uint8 $a = blend-alpha($da, $sa);
+
+        $d.r = blend-channel($dr, $da, $sr, $sa, $a, $gamma, $inv-gamma);
+        $d.g = blend-channel($dg, $da, $sg, $sa, $a, $gamma, $inv-gamma);
+        $d.b = blend-channel($db, $da, $sb, $sa, $a, $gamma, $inv-gamma);
         $d.a = $a;
     }
 }
 
 sub fastblend($d, $s --> Nil) is export {
     if $s.a != 0 {
-        my uint8 $da = $d.a;
-        my uint8 $sa = $s.a;
+        my uint8 ($dr, $dg, $db, $da) = @$d;
+        my uint8 ($sr, $sg, $sb, $sa) = @$s;
+
         my uint8 $a = blend-alpha($da, $sa);
 
-        $d.r = fastblend-channel($d.r, $da, $s.r, $sa, $a);
-        $d.g = fastblend-channel($d.g, $da, $s.g, $sa, $a);
-        $d.b = fastblend-channel($d.b, $da, $s.b, $sa, $a);
+        $d.r = fastblend-channel($dr, $da, $sr, $sa, $a);
+        $d.g = fastblend-channel($dg, $da, $sg, $sa, $a);
+        $d.b = fastblend-channel($db, $da, $sb, $sa, $a);
         $d.a = $a;
     }
 }
 
 sub fakeblend($d, $s --> Nil) is export {
     if $s.a != 0 {
-        my uint8 $da = $d.a;
-        my uint8 $sa = $s.a;
+        my uint8 ($dr, $dg, $db, $da) = @$d;
+        my uint8 ($sr, $sg, $sb, $sa) = @$s;
+
         my uint8 $a = blend-alpha($da, $sa);
 
-        $d.r = fakeblend-channel($d.r, $da, $s.r, $sa, $a);
-        $d.g = fakeblend-channel($d.g, $da, $s.g, $sa, $a);
-        $d.b = fakeblend-channel($d.b, $da, $s.b, $sa, $a);
+        $d.r = fakeblend-channel($dr, $da, $sr, $sa, $a);
+        $d.g = fakeblend-channel($dg, $da, $sg, $sa, $a);
+        $d.b = fakeblend-channel($db, $da, $sb, $sa, $a);
         $d.a = $a;
     }
 }
