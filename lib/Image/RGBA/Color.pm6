@@ -64,8 +64,8 @@ class Color does Colored is export {
     method b { my uint8 $ = $!b }
     method a { my uint8 $ = $!a }
 
-    method create($r, $g, $b, $a?) {
-        self.new(:$r, :$g, :$b, a => $a // 255);
+    method create(*@ ($r, $g, $b, $a = 255)) {
+        self.new(:$r, :$g, :$b, :$a);
     }
 
     method Color { self }
@@ -92,8 +92,8 @@ class ColorRW does ColoredRW is export {
                   STORE => -> $, uint8 $_ { $!a = $_ });
     }
 
-    method create($r, $g, $b, $a?) {
-        self.new(:$r, :$g, :$b, a => $a // 255);
+    method create(*@ ($r, $g, $b, $a = 255)) {
+        self.new(:$r, :$g, :$b, :$a);
     }
 
     method ColorRW { self }

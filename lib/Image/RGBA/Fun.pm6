@@ -56,12 +56,8 @@ multi slurp-images-from-textfile(IO() $_) { $_ }
 
 # Color manipulation
 
-sub create-color($r, $g, $b, $a = 255) is export {
-    Color.create($r, $g, $b, $a);
-}
-
-sub create-color-rw($r, $g, $b, $a = 255) is export {
-    ColorRW.create($r, $g, $b, $a);
+sub create-color(|c) is export {
+    Color.create(|c);
 }
 
 my constant black is export = Color.create(0, 0, 0);
