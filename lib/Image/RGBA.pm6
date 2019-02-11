@@ -59,6 +59,20 @@ class Image::RGBA {
         Pixel.new(:$!bytes, offset => ($y * $!width + $x) * 4);
     }
 
+    method set(uint $x, uint $y, uint8 $r, uint8 $g, uint8 $b, uint8 $a
+        --> Nil) {
+        my uint $offset = ($y * $!width + $x) * 4;
+        $!bytes[$offset    ] = $r;
+        $!bytes[$offset + 1] = $g;
+        $!bytes[$offset + 2] = $b;
+        $!bytes[$offset + 3] = $a;
+    }
+
+    method scanline(uint $y, uint $x = 0, uint $len = ($!width - $x) * 4) {
+        my uint $offset = ($y * $!width + $x) * 4;
+        $!bytes.subbuf-rw($offset, $len);
+    }
+
     method buf8 { $!bytes }
     method ::('Buf[uint8]') { $!bytes }
     method blob8 { $!bytes }
