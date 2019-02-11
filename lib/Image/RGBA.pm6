@@ -1,7 +1,9 @@
 # Copyright 2019 cygx <cygx@cpan.org>
 # Distributed under the Boost Software License, Version 1.0
 
-my class Pixel is Positional {
+use Image::RGBA::Color;
+
+my class Pixel is Positional does ColoredRW {
     has $!bytes;
     has uint $!offset;
 
@@ -25,10 +27,12 @@ my class Pixel is Positional {
     method of { uint8 }
     method elems { 4 }
     method AT-POS(uint $pos) is rw { $!bytes[$!offset + $pos] }
+    method EXISTS-POS(uint $pos) { 0 <= $pos < 4 }
+
     method ASSIGN-POS(uint $pos, uint8 $value) {
         $!bytes[$!offset + $pos] =  $value;
     }
-    method EXISTS-POS(uint $pos) { 0 <= $pos < 4 }
+
     method STORE($values) {
         $!bytes[$!offset    ] = $values[0];
         $!bytes[$!offset + 1] = $values[1];
@@ -36,13 +40,6 @@ my class Pixel is Positional {
         $!bytes[$!offset + 3] = $values[3];
         self;
     }
-
-    method list { ($.r, $.g, $.b, $.a) }
-
-    method gist { self.Str }
-    method Str { "rgba($.r,$.g,$.b,$.a)" }
-    method hex { (self.value +> 8).fmt('%06X') }
-    method hexa { self.value.fmt('%08X') }
 }
 
 class Image::RGBA {
