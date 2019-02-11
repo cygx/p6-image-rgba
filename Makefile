@@ -11,8 +11,10 @@ test:
 t-%: t/%-*.t
 	$(PERL6) $<
 
-png: 
+.PHONY: examples
+examples: 
 	$(PERL6) examples/png.p6 examples/*.txt
+	$(PERL6) examples/blending.p6
 	@$(CHMOD-X) examples/*.png
 
 clean:

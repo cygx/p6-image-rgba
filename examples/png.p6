@@ -11,7 +11,7 @@ for @*ARGS -> IO() $src {
         my $dest = $name ?? $src.sibling("$name\.png")
                          !! $src.extension('png');
 
-        $*ERR.print: "$src ->> {$dest.basename}   {size $src} ->> ?";
+        $*ERR.print: " $src ->> {$dest.basename}   {size $src} ->> ?";
         spurt $dest, .&to-png;
         $*ERR.print: "\b{size $dest}\n";
     }
