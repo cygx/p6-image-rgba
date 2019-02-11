@@ -1,7 +1,7 @@
 # Copyright 2019 cygx <cygx@cpan.org>
 # Distributed under the Boost Software License, Version 1.0
 
-my class Pixel {
+my class Pixel is Positional {
     has $!bytes;
     has uint $!offset;
 
@@ -21,6 +21,23 @@ my class Pixel {
                 $!bytes.write-uint32($!offset, $value, $order);
             }
     }
+
+    method of { uint8 }
+    method elems { 4 }
+    method AT-POS(uint $pos) is rw { $!bytes[$!offset + $pos] }
+    method ASSIGN-POS(uint $pos, uint8 $value) {
+        $!bytes[$!offset + $pos] =  $value;
+    }
+    method EXISTS-POS(uint $pos) { 0 <= $pos < 4 }
+    method STORE($values) {
+        $!bytes[$!offset    ] = $values[0];
+        $!bytes[$!offset + 1] = $values[1];
+        $!bytes[$!offset + 2] = $values[2];
+        $!bytes[$!offset + 3] = $values[3];
+        self;
+    }
+
+    method list { ($.r, $.g, $.b, $.a) }
 
     method gist { self.Str }
     method Str { "rgba($.r,$.g,$.b,$.a)" }
