@@ -5,6 +5,9 @@ unit package Image::RGBA;
 
 use Image::RGBA::Blending;
 
+class Color { ... }
+class ColorRW { ... }
+
 role Colored is export {
     method r { ... }
     method g { ... }
@@ -20,6 +23,36 @@ role Colored is export {
     method gist { "rgba($.r,$.g,$.b,$.a)" }
     method Str { self.hexa }
     method Int { ($.r +< 24) +| ($.g +< 16) +| ($.b +< 8) +| $.a }
+    method Numeric { self.Int }
+
+    method ro { self }
+    method rw { self.ColorRW }
+
+    method Color { Color.new(:$.r, :$.g, :$.b, :$.a) }
+    method ColorRW { ColorRW.new(:$.r, :$.g, :$.b, :$.a) }
+}
+
+role ColoredRW does Colored is export {
+    method ro { self.Color }
+    method rw { self }
+
+    proto method blend($color, $gamma?) {
+        {*}
+        self;
+    }
+
+    multi method blend($color) {
+        fastblend(self, $color);
+    }
+
+    multi method blend($color, Num() $gamma) {
+        blend(self, $color, $gamma);
+    }
+
+    method fakeblend($color) {
+        fakeblend(self, $color);
+        self;
+    }
 }
 
 class Color does Colored is export {
@@ -34,15 +67,8 @@ class Color does Colored is export {
     method create($r, $g, $b, $a?) {
         self.new(:$r, :$g, :$b, a => $a // 255);
     }
-}
 
-role ColoredRW does Colored is export {
-    method Color { Color.new(:$.r, :$.g, :$.b, :$.a) }
-
-    proto method blend($color, $gamma?) {*}
-    multi method blend($color) { fastblend(self, $color) }
-    multi method blend($color, Num() $gamma) { blend(self, $color, $gamma) }
-    method fakeblend($color) { fakeblend(self, $color) }
+    method Color { self }
 }
 
 class ColorRW does ColoredRW is export {
@@ -69,4 +95,6 @@ class ColorRW does ColoredRW is export {
     method create($r, $g, $b, $a?) {
         self.new(:$r, :$g, :$b, a => $a // 255);
     }
+
+    method ColorRW { self }
 }
