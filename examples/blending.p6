@@ -17,4 +17,4 @@ for ^256 -> $x {
 
 my $rows = 24;
 my $bytes = [~] ($real, $fast, $fake).map({ |(.bytes xx $rows) });
-spurt 'blending.png', to-png($bytes, 256, $rows * 3);
+spurt @*ARGS[0] // 'blending.png', to-png($bytes, 256, $rows * 3);

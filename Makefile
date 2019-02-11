@@ -14,7 +14,7 @@ t-%: t/%-*.t
 .PHONY: examples
 examples: 
 	$(PERL6) examples/png.p6 examples/*.txt
-	$(PERL6) examples/blending.p6
+	$(PERL6) examples/blending.p6 examples/blending.png
 	@$(CHMOD-X) examples/*.png
 
 clean:
