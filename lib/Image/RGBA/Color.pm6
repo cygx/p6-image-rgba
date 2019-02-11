@@ -12,22 +12,18 @@ role Colored is export {
     method a { ... }
 
     method list { ($.r, $.g, $.b, $.a) }
+    method shortlist { ($.r, $.g, $.b) }
 
-    method hex { (self.value +> 8).fmt('%06X') }
-    method hexa { self.value.fmt('%08X') }
+    method hex { self.shortlist>>.fmt('%02X').join }
+    method hexa { self.list>>.fmt('%02X').join }
+
     method gist { "rgba($.r,$.g,$.b,$.a)" }
     method Str { self.hexa }
 }
 
 class Color does Colored is export {
-    has uint8 $.r;
-    has uint8 $.g;
-    has uint8 $.b;
-    has uint8 $.a;
-
-    method create($r, $g, $b, $a) {
-        self.new(:$r, :$g, :$b, :$a);
-    }
+    has uint8 ($.r, $.g, $.b, $.a);
+    method create($r, $g, $b, $a) { self.new(:$r, :$g, :$b, :$a) }
 }
 
 role ColoredRW does Colored is export {
@@ -39,13 +35,7 @@ role ColoredRW does Colored is export {
     method fakeblend($color) { fakeblend(self, $color) }
 }
 
-class ColorRW does Colored is export {
-    has uint8 $.r is rw;
-    has uint8 $.g is rw;
-    has uint8 $.b is rw;
-    has uint8 $.a is rw;
-
-    method create($r, $g, $b, $a) {
-        self.new(:$r, :$g, :$b, :$a);
-    }
+class ColorRW does ColoredRW is export {
+    has uint8 ($.r is rw, $.g is rw, $.b is rw, $.a is rw);
+    method create($r, $g, $b, $a) { self.new(:$r, :$g, :$b, :$a) }
 }
