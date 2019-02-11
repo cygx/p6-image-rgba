@@ -12,5 +12,5 @@ install:
   - zef install Image::PNG::Inflated
 script:
   - make test
-  - make png
+  - make examples
   - zef install .
