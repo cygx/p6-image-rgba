@@ -71,15 +71,24 @@ class Image::RGBA {
 
     method create($width, $height, $bytes?) { ... }
     method pixel($x, $y) { ... }
+    method set($x, $y, $r, $g, $b, $a) { ... }
+    method scanline($y, $offset?, $len?) { ... }
 }
 
-my class Pixel {
+my class Pixel is Positional {
     # numerical manipulation
     method r is rw { ... }
     method g is rw { ... }
     method b is rw { ... }
     method a is rw { ... }
     method value($order = BigEndian) is rw { ... }
+
+    # positional
+    method of { ... }    # uint8
+    method elems { ... } # 4
+
+    # listification
+    method list { ... }
 
     # stringification
     method Str { ... }  # rgba(?,?,?,?)
