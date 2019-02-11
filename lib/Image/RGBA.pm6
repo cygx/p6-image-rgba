@@ -59,13 +59,13 @@ class Image::RGBA {
         Pixel.new(:$!bytes, offset => ($y * $!width + $x) * 4);
     }
 
-    method set(uint $x, uint $y, uint8 $r, uint8 $g, uint8 $b, uint8 $a
-        --> Nil) {
+    method set(uint $x, uint $y, uint8 $r, uint8 $g, uint8 $b, uint8 $a) {
         my uint $offset = ($y * $!width + $x) * 4;
         $!bytes[$offset    ] = $r;
         $!bytes[$offset + 1] = $g;
         $!bytes[$offset + 2] = $b;
         $!bytes[$offset + 3] = $a;
+        self;
     }
 
     method scanline(uint $y, uint $x = 0, uint $len = ($!width - $x) * 4) {
