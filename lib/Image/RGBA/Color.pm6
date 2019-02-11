@@ -19,6 +19,7 @@ role Colored is export {
 
     method gist { "rgba($.r,$.g,$.b,$.a)" }
     method Str { self.hexa }
+    method Int { ($.r +< 24) +| ($.g +< 16) +| ($.b +< 8) +| $.a }
 }
 
 class Color does Colored is export {
@@ -38,9 +39,9 @@ class Color does Colored is export {
 role ColoredRW does Colored is export {
     method Color { Color.new(:$.r, :$.g, :$.b, :$.a) }
 
-    proto method blend($color, num $gamma?) {*}
+    proto method blend($color, $gamma?) {*}
     multi method blend($color) { fastblend(self, $color) }
-    multi method blend($color, num $gamma) { blend(self, $color, $gamma) }
+    multi method blend($color, Num() $gamma) { blend(self, $color, $gamma) }
     method fakeblend($color) { fakeblend(self, $color) }
 }
 
