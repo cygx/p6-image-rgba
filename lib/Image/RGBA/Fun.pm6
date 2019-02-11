@@ -60,5 +60,9 @@ sub create-color($r, $g, $b, $a = 255) is export {
     Color.create($r, $g, $b, $a);
 }
 
+sub create-color-rw($r, $g, $b, $a = 255) is export {
+    ColorRW.create($r, $g, $b, $a);
+}
+
 my constant black is export = Color.create(0, 0, 0);
 my constant white is export = Color.create(255, 255, 255);
