@@ -4,7 +4,7 @@ RM = rm -rf
 CHMOD-X = chmod -x
 
 NAME := Image-RGBA
-VERSION := $(file < VERSION)
+VERSION := $(shell cat VERSION)
 FULLNAME := $(NAME)-$(VERSION)
 TARBALL := $(FULLNAME).tar.gz
 

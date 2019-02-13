@@ -11,7 +11,7 @@ install:
   - rakudobrew build-zef
   - zef install Image::PNG::Inflated
 script:
-  - PERL6LIB=lib make examples
+  - make PERL6LIB=lib examples
   - make dist
   - tar -xvzf Image-RGBA-*.tar.gz
-  - zef install ./Image-RGBA-*
+  - zef install ./Image-RGBA-*/
