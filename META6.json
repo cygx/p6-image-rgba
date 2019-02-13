@@ -4,7 +4,7 @@
     "description" : "Create and manipulate 32-bit RGBA images",
     "version"     : "0.2.1",
     "auth"        : "github:cygx",
-    "author"      : "cygx",
+    "authors"     : [ "cygx" ],
     "license"     : "BSL-1.0",
     "source-url"  : "git://github.com/cygx/p6-image-rgba.git",
     "provides"    : {

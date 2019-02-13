@@ -3,7 +3,12 @@ PERL6 = perl6
 RM = rm -rf
 CHMOD-X = chmod -x
 
-export PERL6LIB = lib
+NAME := Image-RGBA
+VERSION := $(file < VERSION)
+FULLNAME := $(NAME)-$(VERSION)
+TARBALL := $(FULLNAME).tar.gz
+
+export PERL6LIB = .6lib
 
 test:
 	$(PROVE) -e '$(PERL6)' t
@@ -19,3 +24,11 @@ examples:
 
 clean:
 	$(RM) examples/*.png
+
+dist: $(TARBALL)
+
+upload: $(TARBALL)
+	@perl6 -MCPAN::Uploader::Tiny -e 'CPAN::Uploader::Tiny.new(:user(prompt "user: "), :password(prompt "pass: ")).upload("$(TARBALL)")'
+
+$(TARBALL): VERSION
+	tar -T DIST.list --transform 's,^,$(FULLNAME)/,' -czf $@

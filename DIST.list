@@ -1,0 +1,10 @@
+META6.json
+README.md
+LICENSE
+lib/Image/RGBA.pm6
+lib/Image/RGBA/Blending.pm6
+lib/Image/RGBA/Color.pm6
+lib/Image/RGBA/Fun.pm6
+lib/Image/RGBA/Text.pm6
+t/01-sanity.t
+t/02-color.t
